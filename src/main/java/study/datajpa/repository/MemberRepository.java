@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
@@ -46,4 +47,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //        countQuery = "select count(m.username) from Member m") // count query 분리 , where 조건이 없거나 left join 만
     Page<Member> findByAge(int age, Pageable pageable);
     // Slice<Member> findByAge(int age, Pageable pageable);
+
+    // @Modifying // update 시 반드시 필요하다.
+    @Modifying(clearAutomatically = true) // update 시 반드시 필요하다.
+    @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
 }

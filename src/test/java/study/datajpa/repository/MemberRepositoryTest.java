@@ -13,6 +13,8 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +28,8 @@ class MemberRepositoryTest {
 
     @Autowired MemberRepository memberRepository;
     @Autowired TeamRepository teamRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     public void testMember() {
@@ -243,5 +247,30 @@ class MemberRepositoryTest {
 
         // *** 주의 ***
         // page 는 1부터가아니라 0부터 이다.
+    }
+
+    @Test
+    public void bulkUpdate() {
+        // given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 19));
+        memberRepository.save(new Member("member3", 20));
+        memberRepository.save(new Member("member4", 21));
+        memberRepository.save(new Member("member5", 40));
+
+        // when
+        // @Modifying(clearAutomatically = true) 를 적용해야 가져올떄 업데이트된 객체가 나온다.
+        int resultCount = memberRepository.bulkAgePlus(20);
+
+        // entityManager.flush(); // 남아있는 쿼리가 날라가고
+        // entityManager.clear(); // 연속성 컨텍스트 초기화 된다.
+
+        List<Member> member5 = memberRepository.findByUsername("member5");
+        Member member = member5.get(0);
+        int age = member.getAge();
+        System.out.println("member5 age = " + age);
+
+        // then
+        assertThat(resultCount).isEqualTo(3);
     }
 }
