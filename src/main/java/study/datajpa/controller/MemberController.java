@@ -22,7 +22,10 @@ public class MemberController {
 
     @GetMapping("/members2/{id}")
     public String findMember(@PathVariable("id") Member member) {
-        return member.getUsername(); // 스프링 data jpa 가 해주는 기능 - 도메인 클래스 컨버터, 권장하지 않는다.
+        // 스프링 data jpa 가 해주는 기능 - 도메인 클래스 컨버터, 권장하지 않는다.
+        // 도메인 클래스 컨버터도 레파지토리를 사용해서 엔티티를 찾음
+        // 조회용으로만 사용해야 한다. 트랜잭션이 없는 범위에서 엔티티를 조회햇으므로 엔티티를 변경해도 db 에 반영되지 않는다. 
+        return member.getUsername();
     }
 
     @PostConstruct
