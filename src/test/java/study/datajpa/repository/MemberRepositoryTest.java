@@ -375,4 +375,43 @@ class MemberRepositoryTest {
             System.out.println("nestedClosedProjections = " + nestedClosedProjections);
         }
     }
+
+    // native query
+    //    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    //    Member findByNativeQuery(String username);
+    // jdbc template , mybatis 권장
+    // 동적쿼리불가, jpql 처럼 애플리케이션 로딩 시점에 문법 확인 불가
+    // sort 파라미터를 통한 정렬이 동작 안할 수 있음
+    // select * 로 모두 가져와야 member 객체로 담을 수 있음
+
+    // Projection 활용
+    @Test
+    public void nativeQueryTest() {
+        // given
+        // member1 -> teamA
+        Team teamA = new Team("teamA");
+
+        teamRepository.save(teamA);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 20, teamA);
+
+        entityManager.persist(member1);
+        entityManager.persist(member2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        Member result = memberRepository.findByNativeQuery("member1");
+        System.out.println("result = " + result);
+
+        Page<MemberProjection> result2 = memberRepository.findByNativeProejctionQuery(PageRequest.of(0, 10));
+
+        List<MemberProjection> content = result2.getContent();
+
+        for (MemberProjection memberProjection : content) {
+            System.out.println("memberProjection = " + memberProjection.getUsername());
+        }
+    }
 }
