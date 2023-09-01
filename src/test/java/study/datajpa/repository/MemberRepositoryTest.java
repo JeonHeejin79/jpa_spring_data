@@ -332,4 +332,35 @@ class MemberRepositoryTest {
     public void callCustom() {
         var result = memberRepository.findMemberCustom();
     }
+
+    // open projection -> 엔티티를 다 다겨와서 처리하는것
+    //    @Value("#{target.username + ' ' + target.age}")
+    //    String getUsername();
+    // close projection -> 필요한것을 정확히 가져오는것
+    //    String getUsername();
+    @Test
+    public void projections() {
+        // given
+        // member1 -> teamA
+        Team teamA = new Team("teamA");
+
+        teamRepository.save(teamA);
+
+        Member member1 = new Member("member1", 10, teamA);
+        Member member2 = new Member("member2", 20, teamA);
+
+        entityManager.persist(member1);
+        entityManager.persist(member2);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        List<UsernameOnly> member11 = memberRepository.findProductionsByUsername("member1");
+
+        for (UsernameOnly usernameOnly : member11) {
+            System.out.println("usernameOnly = " + usernameOnly);
+            System.out.println("usernameOnly.getUsername() = " + usernameOnly.getUsername());
+        }
+
+    }
 }
