@@ -355,12 +355,24 @@ class MemberRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        List<UsernameOnly> member11 = memberRepository.findProductionsByUsername("member1");
+        List<UsernameOnly> restul1 = memberRepository.findProductionsByUsername("member1");
 
-        for (UsernameOnly usernameOnly : member11) {
+        for (UsernameOnly usernameOnly : restul1) {
             System.out.println("usernameOnly = " + usernameOnly);
             System.out.println("usernameOnly.getUsername() = " + usernameOnly.getUsername());
         }
 
+        // dto 프로젝션
+        List<UsernameOnlyDto> result2 = memberRepository.findProductionsDtoByUsername("member1");
+
+        // generic 프로젝션
+        List<UsernameOnlyDto> result3 = memberRepository.findProductionsGenericByUsername("member1", UsernameOnlyDto.class);
+
+        // 중첩 프로젝션
+        List<NestedClosedProjections> member4 = memberRepository.findProductionsGenericByUsername("member1", NestedClosedProjections.class);
+
+        for (NestedClosedProjections nestedClosedProjections : member4) {
+            System.out.println("nestedClosedProjections = " + nestedClosedProjections);
+        }
     }
 }

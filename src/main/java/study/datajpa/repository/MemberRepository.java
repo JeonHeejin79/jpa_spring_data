@@ -77,4 +77,10 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     Member findLockByUsername(String username);
 
     List<UsernameOnly> findProductionsByUsername(@Param("username") String username);
+
+    // DTO PROJECTION
+    List<UsernameOnlyDto> findProductionsDtoByUsername(@Param("username") String username);
+
+    // GENERIC PROJECTION
+    <T>List<T> findProductionsGenericByUsername(@Param("username") String username, Class<T> type);
 }
