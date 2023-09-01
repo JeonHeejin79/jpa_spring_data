@@ -45,6 +45,11 @@ public class MemberController {
         return page.map(MemberDto::new);
     }
 
+    // @Transactional(read = true) 가 있으면 flush 를 안한다.
+    // 플러시를 생략하기 떄문에 변경감지가 안일어나고
+    // dirty checking 이 안일어나기떄문에 약간의 성능이 향상된다.
+    // db driver 에 약간의 최적회가 일어나는 종류들이 있다.
+
     @PostConstruct
     public void init() {
         // memberRepository.save(new Member("userA"));
